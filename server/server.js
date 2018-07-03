@@ -1,4 +1,3 @@
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
@@ -13,9 +12,20 @@ app.use(express.static('client'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+var findUserFromId = function (req, res, next) {
+  var user = _.find(users, { id: req.params.id });
+
+  if (user) {
+    req.user = user;
+    next();
+  } else {
+    res.status(500).send({ error: 'we cannot find user' });
+  }
+};
+
 
 app.get('/users', function (req, res) {
-  res.json(users);  2
+  res.json(users);
 });
 
 app.post('/users', function (req, res) {
@@ -27,15 +37,9 @@ app.post('/users', function (req, res) {
   res.json(user);
 });
 
-app.get('/users/:id', function (req, res) {
-  console.log(req.params.id);
-  if (req.params.id) {
-    var user = _.find(users, { id: req.params.id });
-    console.log(user);
-    res.json(user);
-  } else {
-    res.send();
-  }
+app.get('/users/:id', findUserFromId, function (req, res) {
+    console.log(req.user);
+    res.json(req.user);
 });
 
 app.listen(3000);
