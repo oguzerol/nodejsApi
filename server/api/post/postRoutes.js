@@ -1,10 +1,17 @@
-var postRouter = require('express').Router();
+var router = require('express').Router();
 var logger = require('../../util/logger');
+var controller = require('./postController');
 
-postRouter.route('/')
-  .get(function(req, res){
-    logger.log('Hey from post!!');
-    res.send({ok: true});
-  });
+router.route('id', controller.params);
 
-module.exports = postRouter;
+router.route('/')
+  .get(controller.get)
+  .post(controller.post);
+
+router.route('/:id')
+  .get(controller.getOne)
+  .put(controller.put)
+  .delete(controller.delete);
+
+
+module.exports = router;
