@@ -66,7 +66,7 @@ var createCategories = function(data) {
 
 var createPosts = function(data) {
   var addCategory = function(post, category) {
-    post.categories.push(category);
+    post.categories = post.categories.concat([category]);
 
     return new Promise(function(resolve, reject) {
       post.save(function(err, saved) {
