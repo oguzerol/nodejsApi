@@ -3,7 +3,6 @@ var _ = require('lodash');
 var logger = require('../../util/logger');
 
 exports.params = function(req, res, next, id) {
-  console.log('geldi');
 
   Post.findById(id)
     .populate('author')

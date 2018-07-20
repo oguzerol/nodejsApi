@@ -28,7 +28,7 @@ app.use(function(err, req, res, next) {
   }
 
   logger.error(err.stack);
-  res.status(500).send('Oops');
+  res.status(500).send(err.message);
 });
 
 // export the app for testing
