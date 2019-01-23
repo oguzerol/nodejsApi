@@ -1,15 +1,16 @@
-var express = require('express');
-var app = express();
-var apiRouter = require('./api');
-var err = require('./middleware/err');
+const express = require('express');
+const app = express();
+const apiRouter = require('./api');
+const err = require('./middleware/err');
+const bluebird = require('bluebird');
+const config = require('./config');
+const mongoose = require('mongoose');
 
-var config = require('./config');
+mongoose.Promise = bluebird;
 // db.url is different depending on NODE_ENV
-require('mongoose').connect(config.db.url,{ useNewUrlParser: true });
-
+mongoose.connect(config.db.url,{ useNewUrlParser: true });
 // setup the app middlware
 require('./middleware/appMiddleware')(app);
-
 
 // setup the apiRouter
 app.use('/api', apiRouter);
