@@ -25,7 +25,7 @@ passport.use(
         return done(err);
       }
       if (!user) {
-        return done(null, false);
+        return done(null, false, { message: 'Incorrect username.' });
       }
       if (!user.authenticate(password)) {
         return done(null, false);
@@ -43,7 +43,7 @@ app.post(
   passport.authenticate('local', {
     session: false,
     successRedirect: '/api/users',
-    failureRedirect: '/login'
+    failureRedirect: '/api/categories',
   })
 );
 
