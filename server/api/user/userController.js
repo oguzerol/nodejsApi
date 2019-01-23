@@ -2,8 +2,11 @@ var User = require('./userModel');
 var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
-  User.findById(id)
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    // Yes, it's a valid ObjectId, proceed with `findById` call.
+    User.findById(id)
     .then(function(user) {
+      
       if (!user) {
         next(new Error('No user with that id'));
       } else {
@@ -13,6 +16,9 @@ exports.params = function(req, res, next, id) {
     }, function(err) {
       next(err);
     });
+  }
+  console.log('test');
+  next(new Error('This is not valid id'));
 };
 
 exports.get = function(req, res, next) {
