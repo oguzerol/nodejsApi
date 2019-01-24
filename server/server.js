@@ -7,6 +7,13 @@ const config = require('./config');
 const passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy;
 
+const JwtStrategy = require('passport-jwt').Strategy,
+  ExtractJwt = require('passport-jwt').ExtractJwt;
+const opts = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'secret';
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+
 const User = require('./api/user/userModel');
 
 const mongoose = require('mongoose');
@@ -18,6 +25,8 @@ mongoose.connect(
   { useNewUrlParser: true }
 );
 
+
+// local strategy
 passport.use(
   new LocalStrategy(function(username, password, done) {
     User.findOne({ username: username }, function(err, user) {
@@ -35,6 +44,21 @@ passport.use(
   })
 );
 
+// JWT
+passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+  User.findOne({id: jwt_payload.sub}, function(err, user) {
+      if (err) {
+          return done(err, false);
+      }
+      if (user) {
+          return done(null, user);
+      } else {
+          return done(null, false);
+          // or you could create a new account
+      }
+  });
+}));
+
 // setup the app middlware
 require('./middleware/appMiddleware')(app);
 
@@ -45,6 +69,12 @@ app.post(
     successRedirect: '/api/users',
     failureRedirect: '/api/categories',
   })
+);
+
+app.get('/profile', passport.authenticate('jwt', { session: false }),
+    function(req, res) {
+        res.send(req.user.profile);
+    }
 );
 
 // setup the apiRouter

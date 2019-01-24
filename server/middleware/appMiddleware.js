@@ -1,7 +1,6 @@
 var morgan = require('morgan'); // all request shower
 var bodyParser = require('body-parser'); // handle url requests
 const passport = require('passport');
-var flash = require('connect-flash');
 
 // global middleware setups
 module.exports = function(app) {
